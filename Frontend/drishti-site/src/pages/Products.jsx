@@ -6,6 +6,67 @@ import prod1 from '../assets/prod12.jpg';
 import prod2 from '../assets/prod2.jpeg';
 
 const Products = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [club, setClub] = useState('');
+  const [country, setCountry] = useState('');
+
+  // Function to open the modal
+  const handleEnquireClick = () => {
+    setShowModal(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent page reload
+
+    const formData = {
+      email,
+      password,
+      club,
+      country,
+    };
+
+    try {
+      // Send data to the backend using a POST request
+      const response = await fetch('https://drishtitech-backend.onrender.com/api/enquire/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Form submitted successfully', result);
+        
+
+        closeModal();  // Close the modal after submission
+        toast.success('Your request was submitted successfully. We will get back to you soon.', {
+          position: "top-center",
+          autoClose: 3000, // 3 seconds
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        
+      } else {
+        console.log('Error submitting form:', result.message);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+
   return (
     <div className="products-page">
       <h2>Our Products</h2>
