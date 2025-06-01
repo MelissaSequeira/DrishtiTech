@@ -16,28 +16,26 @@ const upload = multer({ storage: storage });
 
 // POST /api/apply - Handle application form submissions
 // POST /api/apply - Handle application form submissions
+// Route to handle application form submission
 router.post('/', upload.single('resume'), async (req, res) => {
   try {
     const { name, email, role } = req.body;
+    const resumePath = req.file ? req.file.path : null; // ✅ FIXED field name
 
-    if (!req.file) {
-      return res.status(400).json({ error: 'Resume file is missing.' });
+    if (!name || !email || !role || !resumePath) {
+      return res.status(400).json({ error: 'All fields are required.' });
     }
 
-    const newApp = new Application({
-      name,
-      email,
-      role,
-      resume: req.file.path // ✅ Use 'resume' to match your schema
-    });
+    const newApplication = new Application({ name, email, role, resumePath }); // ✅ FIXED field name
+    await newApplication.save();
 
-    await newApp.save();
     res.status(201).json({ message: 'Application submitted successfully!' });
-  } catch (err) {
-    console.error('Error while saving application:', err.message);
-    res.status(500).json({ error: 'Something went wrong on the server.', details: err.message });
+  } catch (error) {
+    console.error('❌ Error in /api/apply:', error.message);
+    res.status(500).json({ error: 'Server error while submitting application' });
   }
 });
+
 
 // In your applicationRoutes.js file
 router.get('/', async (req, res) => {
