@@ -15,25 +15,30 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // POST /api/apply - Handle application form submissions
+// POST /api/apply - Handle application form submissions
 router.post('/', upload.single('resume'), async (req, res) => {
   try {
     const { name, email, role } = req.body;
-    const resumePath = req.file.path;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Resume file is missing.' });
+    }
 
     const newApp = new Application({
       name,
       email,
       role,
-      resumePath
+      resume: req.file.path // ✅ Use 'resume' to match your schema
     });
 
     await newApp.save();
     res.status(201).json({ message: 'Application submitted successfully!' });
   } catch (err) {
-    console.error(err);
+    console.error('Error while saving application:', err.message);
     res.status(500).json({ error: 'Something went wrong on the server.', details: err.message });
   }
 });
+
 // In your applicationRoutes.js file
 router.get('/', async (req, res) => {
   try {
