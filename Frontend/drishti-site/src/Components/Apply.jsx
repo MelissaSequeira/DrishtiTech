@@ -22,7 +22,7 @@ const Apply = () => {
     formData.append('resume', resume);
 
     try {
-      const response = await fetch('http://localhost:5000/api/apply', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/apply`, {
         method: 'POST',
         body: formData,
       });

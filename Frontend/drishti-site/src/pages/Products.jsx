@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Products.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Import images from src/assets
 import prod1 from '../assets/prod12.jpg';
 import prod2 from '../assets/prod2.jpeg';
+
 
 const Products = () => {
   const [showModal, setShowModal] = useState(false);
